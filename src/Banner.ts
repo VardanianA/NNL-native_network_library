@@ -42,6 +42,7 @@ export class Banner {
   public init(): void {
     this.createContainer();
     this.createAdTag();
+    this.showOrHideOnScroll();
   }
 
   private handleWindowResize(): void {
@@ -142,5 +143,111 @@ export class Banner {
     this.destroyAdTag();
     this.createAdTag();
     this.callAdTag();
+  }
+
+  public showOrHideOnScroll(): void {
+    setTimeout(() => {
+      const scroll = document.querySelector(
+        ".interscroller"
+      ) as HTMLElement | null;
+      const bottomline = document.querySelector(
+        ".caramel-bottomline"
+      ) as HTMLElement | null;
+
+      if (!scroll || !bottomline) return;
+
+      const getVisiblePercentageFromBottom = (
+        element: HTMLElement,
+        percentageFromBottom: number
+      ): number => {
+        const rect = element.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+
+        // Calculate the height that must be visible from the bottom
+        const requiredVisibleHeightFromBottom =
+          rect.height * (percentageFromBottom / 100);
+
+        // Calculate the visible height of the element from the bottom
+        const visibleHeightFromBottom = Math.max(
+          0,
+          Math.min(rect.bottom, windowHeight) -
+            Math.max(rect.top, windowHeight - rect.height)
+        );
+
+        // Calculate the percentage of visibility from the bottom
+        const visiblePercentage = Math.min(
+          (visibleHeightFromBottom / requiredVisibleHeightFromBottom) * 100,
+          100
+        );
+
+        return visiblePercentage;
+      };
+
+      const getVisiblePercentageFromTop = (element: HTMLElement): number => {
+        const rect = element.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        const windowWidth = window.innerWidth;
+
+        const visibleHeightTop = Math.max(
+          0,
+          Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0)
+        );
+
+        const visibleWidth = Math.max(
+          0,
+          Math.min(rect.right, windowWidth) - Math.max(rect.left, 0)
+        );
+
+        const totalHeight = rect.height;
+        const requiredVisibleHeightTop = totalHeight * 0.1; // 10% from the top
+        const requiredVisibleHeightBottom = totalHeight * 0.5; // 50% from the bottom
+
+        const actualVisibleHeightTop = Math.max(
+          0,
+          Math.min(visibleHeightTop, requiredVisibleHeightTop)
+        );
+
+        const actualVisibleHeightBottom = Math.max(
+          0,
+          Math.min(
+            totalHeight - (rect.bottom - windowHeight),
+            requiredVisibleHeightBottom
+          )
+        );
+
+        const totalVisibleHeight = Math.min(
+          actualVisibleHeightTop + actualVisibleHeightBottom,
+          totalHeight
+        );
+
+        const visibleArea = visibleWidth * totalVisibleHeight;
+        const totalArea = rect.width * rect.height;
+
+        if (totalArea === 0) {
+          return 0;
+        }
+
+        const percentage = (visibleArea / totalArea) * 100;
+
+        return percentage;
+      };
+
+      const updateBottomlineVisibility = (): void => {
+        const percentageFromBottom = getVisiblePercentageFromBottom(scroll, 50); // Check for 50% visibility from the bottom
+        const percentageFromTop = getVisiblePercentageFromTop(scroll);
+
+        if (percentageFromBottom >= 50) {
+          bottomline.style.display = "none";
+        } else if (percentageFromTop == 10) {
+          bottomline.style.display = "none";
+        } else {
+          bottomline.style.display = "inherit";
+        }
+      };
+
+      // Initial check
+      updateBottomlineVisibility();
+      window.addEventListener("scroll", updateBottomlineVisibility);
+    }, 2000);
   }
 }
