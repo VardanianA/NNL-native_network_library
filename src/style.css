@@ -3,9 +3,202 @@
   background-color: #242424;
 }
 
+#app{
+  padding: 0 15px;
+}
+
+.interscroller{
+  width: 100vw;
+  margin: 15px 0 15px calc((100vw - 100%) / -2);
+  max-height: 100vh;
+}
+
 div[id^="native"]{
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 250px;
+  position: relative;
 }
+
+div[id^="native"] > div{
+  position: relative;
+}
+
+.nativeLogoTop{
+  right: 0;
+  top: -18px; 
+  display: flex; 
+  align-items: center; 
+  width: 300px; 
+  height: 18px; 
+  position: absolute; 
+  margin-top: 0px;  
+}
+
+#top_svg_advertising{
+  margin: unset !important; 
+  max-width: unset !important; 
+  width: 300px !important; 
+  height: 5px !important; 
+  right: 0px !important; 
+  position: absolute !important;
+}
+
+.nativeLogoBottom{
+  width: 145px; 
+  height: 20px; 
+  position: absolute; 
+  bottom: -20px; 
+  right: 0px; 
+  overflow: hidden; 
+  z-index: 2; 
+  display: flex; 
+  align-items: center;
+}
+
+.bottomBox {
+  width: 100%; 
+  height: 100%; 
+  display: flex; 
+  align-items: center; 
+  position: absolute; 
+  right: 0px; 
+  animation-name: logoBoxAnimation;
+}
+
+.logoAnimation {
+  animation-duration: 1s; 
+  animation-iteration-count: 1; 
+  animation-timing-function: ease-in-out;
+} 
+
+@keyframes logoBoxAnimation{
+  0% { 
+    right: -145px; 
+  } 
+  100% { 
+    right: 0px; 
+  }
+} 
+
+#logo_svg_text{
+  width: 125px !important; 
+  height: 18px !important; 
+  right: 0; 
+  position: absolute; 
+  margin: 0 !important; 
+  object-fit: contain;
+} 
+
+#logo_svg{
+  width: 15px !important; 
+  height: 15px !important; 
+  right: 130px; 
+  position: absolute; 
+  margin: 0 !important;
+} 
+
+#logo_svg:hover{
+  animation: rotate2 0.6s linear infinite;
+}
+
+.over { 
+  animation-name: rotate1; 
+  animation-duration: 1.5s; 
+  animation-iteration-count: infinite; 
+  animation-timing-function: linear; 
+} 
+
+@keyframes rotate1 { 
+  from {
+    transform: rotate(0deg);
+  } 
+  to {
+    transform: rotate(360deg);
+  } 
+} 
+
+.out { 
+  animation-name: rotate2; 
+  animation-duration: 1.5s;
+  animation-iteration-count: 1; 
+  animation-timing-function: ease-out; 
+} 
+  
+@keyframes rotate2 { 
+  from {
+    transform: rotate(0deg);
+  } 
+  to {
+    transform: rotate(360deg);
+  } 
+}
+
+.caramel_bottomline_logo{
+  width: 155px; 
+  height: 20px; 
+  position: absolute; 
+  bottom: 0; 
+  right: 0;
+}
+
+.logo_bottomline{
+  width: 155px; 
+  height: 20px; 
+  right: -130px; 
+  bottom: 0; 
+  position: absolute; 
+  background-color: rgb(255 255 255 / 80%); 
+  display: flex; 
+  align-items: center; 
+  border-top-left-radius: 5px; 
+  animation-name: caramel_bottomline
+} 
+
+#bottomline_svg_text{ 
+  width: 125px; 
+  height: 8px;
+  margin-bottom: 0px !important; 
+  position: absolute; 
+  right: 5px;
+  animation-name: ozulfnfzxr_svg_text;
+} 
+
+#bottomline_svg_logo{
+  width: 15px !important; 
+  height: 15px !important; 
+  right: 135px; 
+  position: absolute; 
+  margin-bottom: 0px !important;
+}  
+
+.bottomline_logo_animation{
+  animation-duration: 5s; 
+  animation-fill-mode: forwards; 
+  animation-iteration-count: 1; 
+  animation-timing-function: ease-in-out;
+}  
+
+@keyframes caramel_bottomline{
+  0%{
+    right: -155px;
+  }
+  50%{
+    right: 0;
+  }
+  80%{
+    right: 0;
+  }
+  100%{
+    right: -135px;
+  }
+} 
+
+#inpage-container{
+  width: 300px;
+  height: 100vh;
+  margin: 0 15px;
+}
+
+

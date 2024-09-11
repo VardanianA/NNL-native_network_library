@@ -8,6 +8,7 @@ export class Banner {
   public autoReloadInterval: number;
   public autoReloadMethod: BannerOptions["autoReloadMethod"];
   public devices: BannerOptions["devices"];
+  public logo: BannerOptions["logo"];
   private params: BannerOptions["params"];
   private onClose: BannerOptions["onClose"];
   private onError: BannerOptions["onError"];
@@ -29,6 +30,7 @@ export class Banner {
     this.autoReloadInterval = options.autoReloadInterval ?? 0;
     this.autoReloadMethod = options.autoReloadMethod ?? "default";
     this.devices = options.devices ?? ["desktop", "tablet", "phone"];
+    this.logo = options.logo;
     this.params = options.params;
     this.onClose = options.onClose;
     this.onError = options.onError;
@@ -50,6 +52,7 @@ export class Banner {
 
     if (canShowForDevice && !this.isVisible && !this.hasAdTag) {
       this.callAdTag();
+      this.showOrHideLogo();
     }
 
     this.isVisible = canShowForDevice;
@@ -146,108 +149,102 @@ export class Banner {
   }
 
   public showOrHideOnScroll(): void {
+    const getElementVisibilityInfo = (
+      element: HTMLElement
+    ): {
+      visiblePercentage: number;
+      isTopVisible: boolean;
+      isBottomVisible: boolean;
+    } => {
+      const rect = element.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+
+      const elementTop = rect.top;
+      const elementBottom = rect.bottom;
+      const elementHeight = rect.height;
+
+      const isTopVisible = elementTop >= 0 && elementTop < viewportHeight;
+      const isBottomVisible =
+        elementBottom >= 0 && elementBottom < viewportHeight;
+
+      const visibleTop = Math.max(0, elementTop);
+      const visibleBottom = Math.min(viewportHeight, elementBottom);
+      const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+
+      const visiblePercentage = (visibleHeight / elementHeight) * 100;
+
+      return {
+        visiblePercentage,
+        isTopVisible,
+        isBottomVisible,
+      };
+    };
+
+    const handleScroll = () => {
+      const scrollElement = document.getElementById("scroll") as HTMLElement;
+
+      if (!scrollElement) return;
+
+      const { visiblePercentage, isBottomVisible } =
+        getElementVisibilityInfo(scrollElement);
+
+      if (
+        visiblePercentage > 10 &&
+        !(isBottomVisible && visiblePercentage < 50)
+      ) {
+        (
+          (document.querySelector(".caramel-bottomline") as HTMLElement) || null
+        ).style.display = "none";
+      } else {
+        (
+          (document.querySelector(".caramel-bottomline") as HTMLElement) || null
+        ).style.display = "unset";
+      }
+    };
+
+    handleScroll();
+    document.addEventListener("scroll", handleScroll);
+  }
+
+  public showOrHideLogo(): void {
+    return this.logo ? this.callinPageLogo() : null;
+  }
+
+  public callinPageLogo(): void {
     setTimeout(() => {
-      const scroll = document.querySelector(
-        ".interscroller"
-      ) as HTMLElement | null;
-      const bottomline = document.querySelector(
-        ".caramel-bottomline"
-      ) as HTMLElement | null;
+      const inPage = document.querySelector(".inPage > div");
+      // const bottomLine = document.querySelector(".caramel-bottomline");
 
-      if (!scroll || !bottomline) return;
+      if (!inPage) return;
 
-      const getVisiblePercentageFromBottom = (
-        element: HTMLElement,
-        percentageFromBottom: number
-      ): number => {
-        const rect = element.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
+      const topLogo = document.createElement("a");
 
-        // Calculate the height that must be visible from the bottom
-        const requiredVisibleHeightFromBottom =
-          rect.height * (percentageFromBottom / 100);
+      topLogo.className = "nativeLogoTop";
+      topLogo.href = "https://native.weprodigi.com/";
+      topLogo.target = "_blank";
+      topLogo.innerHTML =
+        '<img src="https://ads.caramel.am/new_logo_svg/advertising.svg" id="top_svg_advertising">';
 
-        // Calculate the visible height of the element from the bottom
-        const visibleHeightFromBottom = Math.max(
-          0,
-          Math.min(rect.bottom, windowHeight) -
-            Math.max(rect.top, windowHeight - rect.height)
-        );
+      inPage.appendChild(topLogo);
 
-        // Calculate the percentage of visibility from the bottom
-        const visiblePercentage = Math.min(
-          (visibleHeightFromBottom / requiredVisibleHeightFromBottom) * 100,
-          100
-        );
+      const bottomLogo = document.createElement("a");
 
-        return visiblePercentage;
-      };
+      bottomLogo.className = "nativeLogoBottom";
+      bottomLogo.href = "https://native.weprodigi.com/";
+      bottomLogo.target = "_blank";
+      bottomLogo.innerHTML =
+        '<div class="bottomBox logoAnimation" id="bottomBox"> <img src="https://ads.caramel.am/new_logo_svg/logo.svg" id="logo_svg_text" > <img src="https://ads.caramel.am/new_logo_svg/caramel.svg" id="logo_svg"> </div>';
 
-      const getVisiblePercentageFromTop = (element: HTMLElement): number => {
-        const rect = element.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        const windowWidth = window.innerWidth;
+      inPage.appendChild(bottomLogo);
 
-        const visibleHeightTop = Math.max(
-          0,
-          Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0)
-        );
+      // const bottomlineLogo = document.createElement("a");
+      // bottomlineLogo.className = "caramel_bottomline_logo";
+      // bottomlineLogo.href = "https://native.weprodigi.com/";
+      // bottomlineLogo.target = "_blank";
+      // bottomlineLogo.innerHTML =
+      //   '<div class="logo_bottomline bottomline_logo_animation" id="logo_bottomline"> <img src="https://ads.caramel.am/new_logo_svg/logo.svg" id="bottomline_svg_text" > <img src="https://ads.caramel.am/new_logo_svg/caramel.svg" id="bottomline_svg_logo" class="" > </div>';
 
-        const visibleWidth = Math.max(
-          0,
-          Math.min(rect.right, windowWidth) - Math.max(rect.left, 0)
-        );
-
-        const totalHeight = rect.height;
-        const requiredVisibleHeightTop = totalHeight * 0.1; // 10% from the top
-        const requiredVisibleHeightBottom = totalHeight * 0.5; // 50% from the bottom
-
-        const actualVisibleHeightTop = Math.max(
-          0,
-          Math.min(visibleHeightTop, requiredVisibleHeightTop)
-        );
-
-        const actualVisibleHeightBottom = Math.max(
-          0,
-          Math.min(
-            totalHeight - (rect.bottom - windowHeight),
-            requiredVisibleHeightBottom
-          )
-        );
-
-        const totalVisibleHeight = Math.min(
-          actualVisibleHeightTop + actualVisibleHeightBottom,
-          totalHeight
-        );
-
-        const visibleArea = visibleWidth * totalVisibleHeight;
-        const totalArea = rect.width * rect.height;
-
-        if (totalArea === 0) {
-          return 0;
-        }
-
-        const percentage = (visibleArea / totalArea) * 100;
-
-        return percentage;
-      };
-
-      const updateBottomlineVisibility = (): void => {
-        const percentageFromBottom = getVisiblePercentageFromBottom(scroll, 50); // Check for 50% visibility from the bottom
-        const percentageFromTop = getVisiblePercentageFromTop(scroll);
-
-        if (percentageFromBottom >= 50) {
-          bottomline.style.display = "none";
-        } else if (percentageFromTop == 10) {
-          bottomline.style.display = "none";
-        } else {
-          bottomline.style.display = "inherit";
-        }
-      };
-
-      // Initial check
-      updateBottomlineVisibility();
-      window.addEventListener("scroll", updateBottomlineVisibility);
-    }, 2000);
+      // bottomLine.appendChild(bottomlineLogo);
+    }, 1000);
   }
 }

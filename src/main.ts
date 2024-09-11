@@ -13,6 +13,7 @@ yandexScript.onload = () => {
     targetSelector: "#app > p:not(:empty):nth-of-type(1)",
     insertPosition: "afterend",
     devices: ["desktop", "tablet"],
+    logo: false,
     autoReloadInterval: 30,
     params: {
       p1: "cetfl",
@@ -26,10 +27,23 @@ yandexScript.onload = () => {
     targetSelector: "#app > p:not(:empty):nth-of-type(1)",
     insertPosition: "afterend",
     devices: ["phone"],
+    logo: true,
     autoReloadInterval: 30,
     params: {
       p1: "cetfl",
       p2: "gkga",
+    },
+  });
+
+  const inPageVideo = new Banner({
+    id: "native_video",
+    format: "inPageVideo",
+    targetSelector: "#app > p:not(:empty):nth-of-type(2)",
+    insertPosition: "afterend",
+    devices: ["desktop", "tablet", "phone"],
+    params: {
+      p1: "dbclj",
+      p2: "gsjj",
     },
   });
 
@@ -39,6 +53,7 @@ yandexScript.onload = () => {
     targetSelector: "body",
     insertPosition: "beforeend",
     devices: ["desktop", "tablet", "phone"],
+    logo: true,
     autoReloadInterval: 30,
     params: {
       p1: "cltnd",
@@ -52,15 +67,19 @@ yandexScript.onload = () => {
     targetSelector: "#app > p:not(:empty):nth-of-type(4)",
     insertPosition: "afterend",
     devices: ["phone"],
-    autoReloadInterval: 30,
+    logo: false,
+    // autoReloadInterval: 30,
     params: {
       p1: "cobbm",
       p2: "hcbe",
+      // p1: "cqqzx",
+      // p2: "hcbe",
     },
   });
 
   inPage.init();
   inPage2.init();
+  inPageVideo.init();
   bottomLine.init();
   scroll.init();
 };

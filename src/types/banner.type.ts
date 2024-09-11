@@ -8,6 +8,7 @@ export interface BannerOptions {
   autoReloadInterval?: number;
   autoReloadMethod?: "default" | "force";
   devices?: Device[];
+  logo?: boolean;
   params: Record<string, unknown>;
   onClose?: () => void;
   onError?: (error: unknown) => void;
